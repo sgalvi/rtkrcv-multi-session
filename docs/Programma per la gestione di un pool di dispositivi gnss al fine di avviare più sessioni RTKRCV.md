@@ -5,7 +5,9 @@ Questo documento descrive un sistema progettato per gestire più ricevitori GNSS
 ## Architettura del Sistema
 
 ### 1. Pool di Dispositivi GNSS
-![[pool_dispositivi.png]]Il sistema è costruito attorno a un pool di ricevitori GNSS con le seguenti caratteristiche:
+
+![pool_dispositivi](pool_dispositivi.png)
+Il sistema è costruito attorno a un pool di ricevitori GNSS con le seguenti caratteristiche:
 
 - Più ricevitori GNSS (RIC 1, RIC 2, ... RIC N) connessi a un laptop centrale
     
@@ -32,7 +34,8 @@ Questo documento descrive un sistema progettato per gestire più ricevitori GNSS
     
 
 ### 2. Gestione delle Sessioni
-![[gestione_sessioni.png]]La gestione delle sessioni avviene tramite un'interfaccia web sulla porta 8080 con i seguenti componenti:
+![gestione_sessioni](gestione_sessioni.png)
+La gestione delle sessioni avviene tramite un'interfaccia web sulla porta 8080 con i seguenti componenti:
 
 #### Componenti Front-end:
 
@@ -71,7 +74,8 @@ Questo documento descrive un sistema progettato per gestire più ricevitori GNSS
         
 
 ### 3. Funzionamento di una Singola Sessione
-![[singola_sessione.png]]Ogni sessione RTKRCV funziona nel seguente modo:
+![singola_sessione](singola_sessione.png)
+Ogni sessione RTKRCV funziona nel seguente modo:
 
 1. Riceve due flussi in ingresso:
     
