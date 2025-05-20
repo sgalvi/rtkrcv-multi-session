@@ -1,0 +1,39 @@
+{
+	"nodes":[
+		{"id":"f1ef7d71e7720545","type":"text","text":"Frontend (webpage, porta 8080)","x":-320,"y":-320,"width":250,"height":60},
+		{"id":"e2ee7e84439faf7f","type":"text","text":"pool_list.json","x":-280,"y":120,"width":210,"height":60},
+		{"id":"02cf3a0c33d9ab2a","type":"text","text":"Ho la coordinata master?","x":160,"y":120,"width":250,"height":60},
+		{"id":"8db3e5bbfe70a633","type":"text","text":"Prendi la coordinata dal master (dal flusso nmea)","x":-232,"y":260,"width":325,"height":80},
+		{"id":"f15552b8078e9a83","type":"text","text":"genera file di configurazione rtkrcv per ciascun rover","x":360,"y":340,"width":300,"height":80},
+		{"id":"ff71978da546e95f","type":"text","text":"lancia n sessioni per ciascun rover","x":385,"y":460,"width":250,"height":60},
+		{"id":"6ab63fefb6af9ee9","type":"text","text":"Backend","x":160,"y":20,"width":250,"height":60},
+		{"id":"5b7ada028bb0cfdf","type":"text","text":"Nome (serial number)","x":300,"y":-640,"width":255,"height":60},
+		{"id":"9b088bad41b1a2c5","type":"text","text":"Stazione 1","x":40,"y":-580,"width":160,"height":60},
+		{"id":"4526599682391471","type":"text","text":"Ip - Porta (default 2222)","x":300,"y":-550,"width":260,"height":50},
+		{"id":"30ada1522b125436","type":"text","text":"Stazione 2","x":40,"y":-480,"width":160,"height":60},
+		{"id":"1adec8575bc44e37","type":"text","text":"Master o rover (1 solo master ammesso)","x":305,"y":-450,"width":250,"height":60},
+		{"id":"8c276d503d474326","type":"text","text":"Stazione N","x":40,"y":-380,"width":160,"height":60},
+		{"id":"fd2c2f3b70415274","x":35,"y":-240,"width":165,"height":50,"type":"text","text":"Tasto avvia"},
+		{"id":"0a60437922d225a5","x":35,"y":-160,"width":165,"height":50,"type":"text","text":"Tasto salva"}
+	],
+	"edges":[
+		{"id":"5a243b31fc67a11b","fromNode":"f1ef7d71e7720545","fromSide":"right","toNode":"9b088bad41b1a2c5","toSide":"left"},
+		{"id":"cc7a97e45ee56ba0","fromNode":"f1ef7d71e7720545","fromSide":"right","toNode":"30ada1522b125436","toSide":"left"},
+		{"id":"48c9f062b6c96d84","fromNode":"f1ef7d71e7720545","fromSide":"right","toNode":"8c276d503d474326","toSide":"left"},
+		{"id":"163ef9617b787d33","fromNode":"9b088bad41b1a2c5","fromSide":"right","toNode":"5b7ada028bb0cfdf","toSide":"left"},
+		{"id":"a76183a47c0430bf","fromNode":"9b088bad41b1a2c5","fromSide":"right","toNode":"4526599682391471","toSide":"left"},
+		{"id":"c28886245198d9a3","fromNode":"9b088bad41b1a2c5","fromSide":"right","toNode":"1adec8575bc44e37","toSide":"left"},
+		{"id":"3b0c8a64eac76cde","fromNode":"e2ee7e84439faf7f","fromSide":"right","toNode":"02cf3a0c33d9ab2a","toSide":"left"},
+		{"id":"a2c94afeb7259d26","fromNode":"02cf3a0c33d9ab2a","fromSide":"bottom","toNode":"8db3e5bbfe70a633","toSide":"right","label":"no"},
+		{"id":"1aba8372d7953d3a","fromNode":"8db3e5bbfe70a633","fromSide":"left","toNode":"e2ee7e84439faf7f","toSide":"left","label":"imposta coordinata master"},
+		{"id":"b1f7fd510da637c5","fromNode":"02cf3a0c33d9ab2a","fromSide":"bottom","toNode":"f15552b8078e9a83","toSide":"top","label":"si"},
+		{"id":"052203121b446783","fromNode":"f15552b8078e9a83","fromSide":"bottom","toNode":"ff71978da546e95f","toSide":"top"},
+		{"id":"9b2bad3d32af177b","fromNode":"6ab63fefb6af9ee9","fromSide":"bottom","toNode":"02cf3a0c33d9ab2a","toSide":"top"},
+		{"id":"6863895bb6b02a60","fromNode":"f1ef7d71e7720545","fromSide":"bottom","toNode":"fd2c2f3b70415274","toSide":"left"},
+		{"id":"e98b3ceb57dce8de","fromNode":"f1ef7d71e7720545","fromSide":"bottom","toNode":"0a60437922d225a5","toSide":"left"},
+		{"id":"226e653fa1067e5f","fromNode":"0a60437922d225a5","fromSide":"bottom","toNode":"e2ee7e84439faf7f","toSide":"top","label":"Salva"},
+		{"id":"0764564aeb93fa1e","fromNode":"fd2c2f3b70415274","fromSide":"right","toNode":"e2ee7e84439faf7f","toSide":"right","label":"Salva"},
+		{"id":"6ce847a893b2b487","fromNode":"fd2c2f3b70415274","fromSide":"right","toNode":"6ab63fefb6af9ee9","toSide":"top","label":"Avvia"},
+		{"id":"a40230acb83d434b","fromNode":"e2ee7e84439faf7f","fromSide":"left","toNode":"f1ef7d71e7720545","toSide":"left","label":"Leggi"}
+	]
+}

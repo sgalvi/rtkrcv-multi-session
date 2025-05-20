@@ -1,0 +1,17 @@
+{
+	"nodes":[
+		{"id":"9abd9634a22795e7","type":"text","text":"RIC 1","x":-200,"y":-300,"width":120,"height":60},
+		{"id":"b28bc5f0b545c8d8","type":"text","text":"RIC 2","x":-31,"y":-300,"width":120,"height":60},
+		{"id":"96b9ab5eb9f3539a","type":"text","text":"RIC N","x":220,"y":-300,"width":120,"height":60,"color":"1"},
+		{"id":"97038338ce33bef1","type":"text","text":"...","x":120,"y":-300,"width":80,"height":60},
+		{"id":"47f9f6eabdce1cc9","type":"text","text":"LAPTOP","x":4,"y":80,"width":156,"height":67,"color":"6"},
+		{"id":"e78c1eb32d744344","type":"text","text":"## Docker Image\n-  **OS:** Debian\n- **Software:** RTKRCV(RTKLIB) (Precompilato)\n- **Sviluppo:** un programma per la gestione di più sessioni rtkrcv.\n","x":-196,"y":200,"width":556,"height":220,"color":"5"}
+	],
+	"edges":[
+		{"id":"419e653d25587d4e","fromNode":"47f9f6eabdce1cc9","fromSide":"left","toNode":"9abd9634a22795e7","toSide":"bottom","label":"Interroga porta 2222"},
+		{"id":"11c0a8ed8f960e7b","fromNode":"47f9f6eabdce1cc9","fromSide":"top","toNode":"b28bc5f0b545c8d8","toSide":"bottom","label":"2222"},
+		{"id":"bde9895c0c49dcdb","fromNode":"47f9f6eabdce1cc9","fromSide":"right","toNode":"96b9ab5eb9f3539a","toSide":"bottom","label":"2222"},
+		{"id":"51e9e39a5a345b30","fromNode":"47f9f6eabdce1cc9","fromSide":"bottom","toNode":"e78c1eb32d744344","toSide":"top"},
+		{"id":"9de6a12af07d2b22","fromNode":"47f9f6eabdce1cc9","fromSide":"left","toNode":"9abd9634a22795e7","toSide":"left","label":"Assegna la Master ad un ricevitore del pool"}
+	]
+}
