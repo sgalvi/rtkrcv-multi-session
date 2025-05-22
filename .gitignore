@@ -1,2 +1,12 @@
 pisdrul/
-__pycache__
+__pycache__/
+rtklib
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
+*.egg
+pool_list.json
+rtkrcv
+config/
+output/

@@ -1,3 +1,18 @@
 {
-  "devices": []
+  "devices": [
+    {
+      "name": "FLEE",
+      "serial": "2409-0017",
+      "ip": " \t10.55.66.117",
+      "port": 2222,
+      "role": "Master"
+    },
+    {
+      "name": "GREI",
+      "serial": "2409-0002",
+      "ip": "10.55.66.102",
+      "port": 2222,
+      "role": "Rover"
+    }
+  ]
 }

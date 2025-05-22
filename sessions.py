@@ -4,11 +4,23 @@ import time
 import os
 import re
 from datetime import datetime
+import pwd
+import os.path
 
 class SessionManager:
-    def __init__(self):
+    def __init__(self, rtkrcv_path='rtkrcv'):
         self.active_sessions = {}  # serial -> session_info
         self.lock = threading.Lock()
+        # Converti in percorso assoluto
+        self.rtkrcv_path = os.path.abspath(os.path.expanduser(rtkrcv_path))
+        
+        # Aggiungi debug info
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"Absolute rtkrcv path: {self.rtkrcv_path}")
+        print(f"Path exists: {os.path.exists(self.rtkrcv_path)}")
+        print(f"Is file: {os.path.isfile(self.rtkrcv_path)}")
+        print(f"Has execute permission: {os.access(self.rtkrcv_path, os.X_OK)}")
+        print(f"Effective user: {pwd.getpwuid(os.geteuid()).pw_name}")
     
     def create_rtkrcv_config(self, rover, master):
         """Crea il file di configurazione per RTKRCV"""
@@ -151,47 +163,43 @@ file-cmdfile3 =
         """Avvia una sessione RTKRCV per un rover"""
         with self.lock:
             serial = rover['serial']
-            
+
             # Controlla se la sessione è già attiva
             if serial in self.active_sessions:
                 if self.active_sessions[serial]['process'].poll() is None:
                     return False, "Sessione già attiva per questo rover"
-            
+
             try:
+                # Crea le directory se non esistono
+                os.makedirs("config", exist_ok=True)
+                os.makedirs("output", exist_ok=True)
+                
+                # Assicurati che il working directory sia quello corretto
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                os.chdir(script_dir)
+
                 # Crea il file di configurazione
                 config_path = self.create_rtkrcv_config(rover, master)
-                
+
                 # Estrai coordinate del master (simulato)
                 master_coords = self.extract_master_coordinates(master)
-                
-                # Per ora simula l'esecuzione di RTKRCV con un processo fittizio
-                # In produzione sostituire con: ['rtkrcv', '-c', config_path]
-                cmd = [
-                    'python', '-c',
-                    (
-                        "import time\n"
-                        "import random\n"
-                        "from datetime import datetime\n"
-                        f"output_file = 'output/{serial}.nmea'\n"
-                        f"with open(output_file, 'w') as f:\n"
-                        f"    f.write('# RTKRCV Session started for {rover['name']} at {{}}\\n'.format(datetime.now()))\n"
-                        "    f.flush()\n"
-                        "    counter = 0\n"
-                        "    while True:\n"
-                        "        time_str = datetime.now().strftime('%H%M%S.%f')[:-3]\n"
-                        f"        lat = {master_coords['lat']} + random.uniform(-0.0001, 0.0001)\n"
-                        f"        lon = {master_coords['lon']} + random.uniform(-0.0001, 0.0001)\n"
-                        f"        alt = {master_coords['alt']}\n"
-                        "        nmea_line = '$GPGGA,{},%.6f,N,%.6f,E,4,08,1.2,%.1f,M,45.3,M,2.0,0000*hh\\n' % (time_str, lat, lon, alt)\n"
-                        "        f.write(nmea_line)\n"
-                        "        f.flush()\n"
-                        "        counter += 1\n"
-                        f"        if counter % 10 == 0:\n"
-                        f"            print('RTKRCV {serial}: {{}} NMEA sentences generated'.format(counter))\n"
-                        "        time.sleep(1)\n"
-                    )
-                ]
-                
+
+                # Debugging: Print the value of self.rtkrcv_path
+                print(f"Debug: self.rtkrcv_path = {self.rtkrcv_path}")
+
+                # Debugging: Check if the file exists and is executable using os.path
+                try:
+                    if not os.path.isfile(self.rtkrcv_path):
+                        raise FileNotFoundError(f"File not found: {self.rtkrcv_path}")
+                    if not os.access(self.rtkrcv_path, os.X_OK):
+                        raise PermissionError(f"File not executable: {self.rtkrcv_path}")
+                except Exception as e:
+                    print(f"Error accessing rtkrcv: {str(e)}")
+                    print(f"Current working directory: {os.getcwd()}")
+                    return False, f"Error accessing rtkrcv: {str(e)}"
+
+                cmd = [self.rtkrcv_path, '-c', config_path]
+
                 # Avvia il processo
                 process = subprocess.Popen(
                     cmd,
@@ -199,7 +207,7 @@ file-cmdfile3 =
                     stderr=subprocess.PIPE,
                     text=True
                 )
-                
+
                 # Salva le informazioni della sessione
                 self.active_sessions[serial] = {
                     'process': process,
@@ -209,9 +217,9 @@ file-cmdfile3 =
                     'start_time': datetime.now(),
                     'output_file': f"output/{serial}.nmea"
                 }
-                
+
                 return True, f"Sessione RTKRCV avviata per {rover['name']}"
-                
+
             except Exception as e:
                 return False, f"Errore nell'avvio della sessione: {str(e)}"
     
@@ -311,3 +319,13 @@ file-cmdfile3 =
             
             for serial in stopped_sessions:
                 del self.active_sessions[serial]
+
+manager = SessionManager(rtkrcv_path='./rtkrcv')
+
+
+# Ottieni il percorso assoluto dello script corrente
+script_dir = os.path.dirname(os.path.abspath(__file__))
+rtkrcv_path = os.path.join(script_dir, 'rtklib', 'rtkrcv')
+
+# Inizializza il manager con il percorso assoluto
+manager = SessionManager(rtkrcv_path=rtkrcv_path)
