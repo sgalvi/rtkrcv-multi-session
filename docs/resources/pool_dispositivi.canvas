@@ -1,0 +1,114 @@
+{
+  "edges": [
+    {
+      "fromNode": "47f9f6eabdce1cc9",
+      "fromSide": "left",
+      "id": "419e653d25587d4e",
+      "label": "Interroga porta 2222",
+      "toNode": "9abd9634a22795e7",
+      "toSide": "bottom"
+    },
+    {
+      "fromNode": "47f9f6eabdce1cc9",
+      "fromSide": "top",
+      "id": "11c0a8ed8f960e7b",
+      "label": "2222",
+      "toNode": "b28bc5f0b545c8d8",
+      "toSide": "bottom"
+    },
+    {
+      "fromNode": "47f9f6eabdce1cc9",
+      "fromSide": "right",
+      "id": "bde9895c0c49dcdb",
+      "label": "2222",
+      "toNode": "96b9ab5eb9f3539a",
+      "toSide": "bottom"
+    },
+    {
+      "fromNode": "47f9f6eabdce1cc9",
+      "fromSide": "bottom",
+      "id": "51e9e39a5a345b30",
+      "toNode": "e78c1eb32d744344",
+      "toSide": "top"
+    },
+    {
+      "fromNode": "47f9f6eabdce1cc9",
+      "fromSide": "left",
+      "id": "9de6a12af07d2b22",
+      "label": "Assegna la Master ad un ricevitore del pool",
+      "toNode": "9abd9634a22795e7",
+      "toSide": "left"
+    }
+  ],
+  "nodes": [
+    {
+      "height": 60,
+      "id": "9abd9634a22795e7",
+      "styleAttributes": {
+      },
+      "text": "RIC 1",
+      "type": "text",
+      "width": 120,
+      "x": -200,
+      "y": -300
+    },
+    {
+      "height": 60,
+      "id": "b28bc5f0b545c8d8",
+      "styleAttributes": {
+      },
+      "text": "RIC 2",
+      "type": "text",
+      "width": 120,
+      "x": -31,
+      "y": -300
+    },
+    {
+      "color": "1",
+      "height": 60,
+      "id": "96b9ab5eb9f3539a",
+      "styleAttributes": {
+      },
+      "text": "RIC N",
+      "type": "text",
+      "width": 120,
+      "x": 220,
+      "y": -300
+    },
+    {
+      "height": 60,
+      "id": "97038338ce33bef1",
+      "styleAttributes": {
+      },
+      "text": "...",
+      "type": "text",
+      "width": 80,
+      "x": 120,
+      "y": -300
+    },
+    {
+      "color": "6",
+      "height": 67,
+      "id": "47f9f6eabdce1cc9",
+      "styleAttributes": {
+      },
+      "text": "LAPTOP",
+      "type": "text",
+      "width": 156,
+      "x": 4,
+      "y": 80
+    },
+    {
+      "color": "5",
+      "height": 220,
+      "id": "e78c1eb32d744344",
+      "styleAttributes": {
+      },
+      "text": "## Docker Image\n-  **OS:** Debian\n- **Software:** RTKRCV(RTKLIB) (Precompilato)\n- **Sviluppo:** un programma per la gestione di più sessioni rtkrcv.\n",
+      "type": "text",
+      "width": 556,
+      "x": -196,
+      "y": 200
+    }
+  ]
+}

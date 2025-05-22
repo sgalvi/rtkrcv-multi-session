@@ -1,0 +1,91 @@
+{
+  "edges": [
+    {
+      "fromNode": "2bffcda70c28e666",
+      "fromSide": "bottom",
+      "id": "00aec016c15781dc",
+      "label": "Nmea e raw",
+      "toNode": "cee39baf8b12ec73",
+      "toSide": "top"
+    },
+    {
+      "fromNode": "f14e47c14b449bbe",
+      "fromSide": "bottom",
+      "id": "e8cd63f22b7af81b",
+      "toNode": "8eb66d5581734c78",
+      "toSide": "top"
+    },
+    {
+      "fromNode": "f14e47c14b449bbe",
+      "fromSide": "bottom",
+      "id": "dfb233aeb3bee4d8",
+      "label": "Nmea e raw",
+      "toNode": "cee39baf8b12ec73",
+      "toSide": "top"
+    },
+    {
+      "fromNode": "cee39baf8b12ec73",
+      "fromSide": "left",
+      "id": "80b58f23c07fea85",
+      "label": "output flusso diff nmea",
+      "toNode": "8ea131b8d9dc872c",
+      "toSide": "left"
+    },
+    {
+      "fromNode": "8eb66d5581734c78",
+      "fromSide": "bottom",
+      "id": "5aae0b489d85da90",
+      "toNode": "cee39baf8b12ec73",
+      "toSide": "right"
+    }
+  ],
+  "nodes": [
+    {
+      "color": "5",
+      "height": 60,
+      "id": "2bffcda70c28e666",
+      "text": "Stream rover",
+      "type": "text",
+      "width": 180,
+      "x": -301,
+      "y": -240
+    },
+    {
+      "color": "4",
+      "height": 60,
+      "id": "f14e47c14b449bbe",
+      "text": "Stream caster",
+      "type": "text",
+      "width": 176,
+      "x": -1,
+      "y": -240
+    },
+    {
+      "height": 60,
+      "id": "cee39baf8b12ec73",
+      "text": "** RTKRCV **",
+      "type": "text",
+      "width": 476,
+      "x": -297,
+      "y": 110
+    },
+    {
+      "height": 60,
+      "id": "8ea131b8d9dc872c",
+      "text": "textfile",
+      "type": "text",
+      "width": 250,
+      "x": -297,
+      "y": 270
+    },
+    {
+      "height": 60,
+      "id": "8eb66d5581734c78",
+      "text": "Prendere la posizione master da stringa nmea",
+      "type": "text",
+      "width": 253,
+      "x": 175,
+      "y": -80
+    }
+  ]
+}
