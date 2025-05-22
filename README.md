@@ -84,7 +84,7 @@ http://localhost:5000
    - **Nome**: Nome descrittivo del dispositivo
    - **Seriale**: Numero seriale univoco del dispositivo
    - **IP**: Indirizzo IP del dispositivo GNSS
-   - **Porta**: Porta di comunicazione (es. 2101)
+   - **Porta**: Porta di comunicazione (es. 2222)
    - **Ruolo**: Seleziona "Master" o "Rover"
 
 2. Clicca "Aggiungi Dispositivo"
