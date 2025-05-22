@@ -1,5 +1,5 @@
 pisdrul/
-__pycache__/
+__pycache__/*
 rtklib
 *.pyc
 *.pyo
@@ -10,3 +10,4 @@ pool_list.json
 rtkrcv
 config/
 output/
+*nav

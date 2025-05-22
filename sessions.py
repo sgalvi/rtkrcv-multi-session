@@ -25,122 +25,141 @@ class SessionManager:
     def create_rtkrcv_config(self, rover, master):
         """Crea il file di configurazione per RTKRCV"""
         config_content = f"""# RTKRCV Configuration for {rover['name']}
-# Generated at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+    # Generated at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-console-passwd = admin
-console-timetype = gpst
+    console-passwd     =admin
+    console-timetype   =utc
+    console-soltype    =dms
+    console-solflag    =off
 
-# Input streams
-inpstr1-type = tcpcli
-inpstr1-path = {rover['ip']}:{rover['port']}
-inpstr1-format = rtcm3
+    # OPTIONS 1
+    pos1-posmode       =static-start
+    pos1-frequency     =l1
+    pos1-soltype       =forward
+    pos1-elmask        =15
+    pos1-snrmask_r     =on
+    pos1-snrmask_b     =on
+    pos1-snrmask_L1    =20,20,20,20,20,20,20,20,20
+    pos1-snrmask_L2    =0,0,0,0,0,0,0,0,0
+    pos1-snrmask_L5    =0,0,0,0,0,0,0,0,0
+    pos1-dynamics      =on
+    pos1-tidecorr      =off
+    pos1-ionoopt       =brdc
+    pos1-tropopt       =saas
+    pos1-sateph        =brdc
+    pos1-posopt1       =off
+    pos1-posopt2       =off
+    pos1-posopt3       =off
+    pos1-posopt4       =off
+    pos1-posopt5       =off
+    pos1-exclsats      =
+    pos1-navsys        =13
 
-inpstr2-type = tcpcli  
-inpstr2-path = {master['ip']}:{master['port']}
-inpstr2-format = rtcm3
+    # OPTIONS 2
+    pos2-armode        =fix-and-hold
+    pos2-gloarmode     =off
+    pos2-arfilter      =on
+    pos2-bdsarmode     =off
+    pos2-arlockcnt     =0
+    pos2-arthres       =3
+    pos2-arthres1      =0.99
+    pos2-arthres2      =-0.055
+    pos2-arthres3      =1E-7
+    pos2-arthres4      =1E-3
+    pos2-minfixsats    =4
+    pos2-minholdsats   =5
+    pos2-arelmask      =0
+    pos2-aroutcnt      =5
+    pos2-arminfix      =0
+    pos2-armaxiter     =1
+    pos2-elmaskhold    =0
+    pos2-slipthres     =0.05
+    pos2-maxage        =100
+    pos2-syncsol       =off
+    pos2-rejionno      =1000
+    pos2-rejgdop       =30
+    pos2-niter         =1
+    pos2-baselen       =0
+    pos2-basesig       =0
 
-# Output stream
-outstr1-type = file
-outstr1-path = output/{rover['serial']}.nmea
-outstr1-format = nmea
+    # OUTPUT DETAILS
+    out-solformat      =llh        # (0:llh,1:xyz,2:enu,3:nmea)
+    out-outhead        =on
+    out-outopt         =off
+    out-timesys        =gpst
+    out-timeform       =hms
+    out-timendec       =3
+    out-degform        =deg
+    out-fieldsep       =
+    out-height         =ellipsoidal
+    out-geoid          =internal
+    out-solstatic      =all
+    out-nmeaintv1      =1
+    out-nmeaintv2      =1
+    out-outstat        =off
+    out-outsingle      =on
 
-# Processing options
-pos1-posmode = kinematic
-pos1-frequency = l1+l2
-pos1-soltype = forward
-pos1-elmask = 15
-pos1-snrmask_r = off
-pos1-snrmask_b = off
-pos1-snrmask_L1 = 0,0,0,0,0,0,0,0,0
-pos1-snrmask_L2 = 0,0,0,0,0,0,0,0,0
-pos1-snrmask_L5 = 0,0,0,0,0,0,0,0,0
-pos1-dynamics = on
-pos1-tidecorr = off
-pos1-ionoopt = brdc
-pos1-tropopt = saas
-pos1-sateph = brdc
-pos1-posopt1 = off
-pos1-posopt2 = off
-pos1-posopt3 = off
-pos1-posopt4 = off
-pos1-posopt5 = off
-pos1-exclsats = 
-pos1-navsys = 1
+    # STATISTICS
+    stats-eratio1      =300
+    stats-eratio2      =100
+    stats-errphase     =0.003
+    stats-errphaseel   =0.003
+    stats-errphasebl   =0
+    stats-errdoppler   =10
+    stats-stdbias      =30
+    stats-stdiono      =0.03
+    stats-stdtrop      =0.3
+    stats-prnaccelh    =1
+    stats-prnaccelv    =1
+    stats-prnbias      =0.0001
+    stats-prniono      =0.001
+    stats-prntrop      =0.0001
+    stats-clkstab      =5e-12
 
-pos2-armode = continuous
-pos2-gloarmode = on
-pos2-arthres = 3
-pos2-arlockcnt = 0
-pos2-arelmask = 0
-pos2-arminfix = 10
-pos2-armaxiter = 1
-pos2-elmaskhold = 0
-pos2-aroutcnt = 5
-pos2-slipthres = 0.05
-pos2-maxage = 30
-pos2-rejionno = 0.0
-pos2-niter = 1
-pos2-baselen = 0
-pos2-basesig = 0
+    # ROVER DETAILS
+    ant1-postype       =single
+    ant1-pos1          =
+    ant1-pos2          =
+    ant1-pos3          =
+    ant1-anttype       =
+    ant1-antdele       =0
+    ant1-antdeln       =0
+    ant1-antdelu       =0
 
-out-solformat = nmea
-out-outhead = on
-out-outopt = on
-out-timesys = gpst
-out-timeform = tow
-out-timendec = 3
-out-degform = deg
-out-fieldsep = 
-out-height = ellipsoidal
-out-geoid = internal
-out-solstatic = all
-out-nmeaintv1 = 0
-out-nmeaintv2 = 0
-out-outstat = off
+    # MASTER DETAILS
+    ant2-postype       =llh
+    ant2-pos1          =
+    ant2-pos2          =
+    ant2-pos3          =
+    ant2-anttype       =
+    ant2-antdele       =0
+    ant2-antdeln       =0
+    ant2-antdelu       =0
 
-stats-eratio1 = 100
-stats-eratio2 = 100
-stats-errphase = 0.003
-stats-errphaseel = 0.003
-stats-errphasebl = 0
-stats-errdoppler = 1
-stats-stdbias = 30
-stats-stdiono = 0.03
-stats-stdtrop = 0.3
-stats-prnaccelh = 1
-stats-prnaccelv = 1
-stats-prnbias = 0.0001
-stats-prniono = 0.001
-stats-prntrop = 0.0001
-stats-prnpos = 0
-stats-clkstab = 5e-12
+    # Input streams
+    inpstr1-type       =tcpcli
+    inpstr2-type       =ntripcli
+    inpstr3-type       =off
+    inpstr1-path       = {rover['ip']}:{rover['port']}
+    inpstr1-format     = rtcm3
 
-ant1-postype = llh
-ant1-pos1 = 0
-ant1-pos2 = 0  
-ant1-pos3 = 0
-ant1-anttype = 
-ant1-antdele = 0
-ant1-antdeln = 0
-ant1-antdelu = 0
+    inpstr2-type       =tcpcli
+    inpstr2-path       = {master['ip']}:{master['port']}
+    inpstr2-format     = rtcm3
 
-ant2-postype = llh
-ant2-pos1 = 0
-ant2-pos2 = 0
-ant2-pos3 = 0
-ant2-anttype =
-ant2-antdele = 0
-ant2-antdeln = 0
-ant2-antdelu = 0
+    # Output stream
+    outstr1-type       =file
+    outstr1-path       =output/{rover['serial']}.pos
+    outstr1-format     =llh
 
-misc-timeinterp = off
-misc-sbasatsel = 0
-misc-rnxopt1 = 
-misc-rnxopt2 = 
-file-cmdfile1 = 
-file-cmdfile2 = 
-file-cmdfile3 = 
-"""
+    misc-timeinterp    =off
+    misc-sbasatsel     =0
+    misc-rnxopt1       =
+    misc-rnxopt2       =
+    file-cmdfile1      =
+    file-cmdfile2      =
+    file-cmdfile3      =
+    """
         
         config_path = f"config/{rover['serial']}.conf"
         with open(config_path, 'w') as f:
