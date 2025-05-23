@@ -75,7 +75,7 @@ function updateDevicesTable() {
     if (devices.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                <td colspan="9" style="text-align: center; padding: 40px; color: #7f8c8d;">
                     Nessun dispositivo configurato
                 </td>
             </tr>
@@ -117,6 +117,9 @@ function updateDevicesTable() {
                 <td>${escapeHtml(device.ip)}:${device.port}</td>
                 <td><span class="${roleClass}">${device.role}</span></td>
                 <td>${statusBadge}</td>
+                <td>${escapeHtml(device.coordinates?.x ?? 'N/A')}</td>
+                <td>${escapeHtml(device.coordinates?.y ?? 'N/A')}</td>
+                <td>${escapeHtml(device.coordinates?.z ?? 'N/A')}</td>
                 <td>
                     ${sessionActions}
                     <button class="btn-warning btn-small" onclick="editDevice('${device.serial}')" title="Modifica dispositivo">

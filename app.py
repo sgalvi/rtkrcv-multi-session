@@ -33,10 +33,16 @@ def index():
 def get_devices():
     """Restituisce l'elenco dei dispositivi configurati"""
     config = load_pool_config()
-    # Aggiungi lo stato delle sessioni a ogni dispositivo
+    # Aggiungi lo stato delle sessioni e le coordinate a ogni dispositivo rover
     for device in config['devices']:
         if device['role'] == 'Rover':
             device['session_status'] = session_manager.get_session_status(device['serial'])
+            # Ottieni le coordinate XYZ del rover se disponibili
+            rover_coords = session_manager.get_rover_coordinates(device['serial'])
+            if rover_coords:
+                device['coordinates'] = rover_coords
+            else:
+                device['coordinates'] = {'x': 'N/A', 'y': 'N/A', 'z': 'N/A'}
     return jsonify(config)
 
 @app.route('/api/devices', methods=['POST'])

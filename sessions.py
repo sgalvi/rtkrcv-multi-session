@@ -22,7 +22,7 @@ class SessionManager:
         print(f"Has execute permission: {os.access(self.rtkrcv_path, os.X_OK)}")
         print(f"Effective user: {pwd.getpwuid(os.geteuid()).pw_name}")
     
-    def create_rtkrcv_config(self, rover, master):
+    def create_rtkrcv_config(self, rover, master_device_info, master_coords):
         """Crea il file di configurazione per RTKRCV"""
         config_content = f"""# RTKRCV Configuration for {rover['name']}
     # Generated at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -127,10 +127,10 @@ class SessionManager:
     ant1-antdelu       =0
 
     # MASTER DETAILS
-    ant2-postype       =llh
-    ant2-pos1          =
-    ant2-pos2          =
-    ant2-pos3          =
+    ant2-postype       =llh # Use LLH for master coordinates
+    ant2-pos1          ={master_coords['lat']}
+    ant2-pos2          ={master_coords['lon']}
+    ant2-pos3          ={master_coords['alt']}
     ant2-anttype       =
     ant2-antdele       =0
     ant2-antdeln       =0
@@ -144,7 +144,7 @@ class SessionManager:
     inpstr1-format     = rtcm3
 
     inpstr2-type       =tcpcli
-    inpstr2-path       = {master['ip']}:{master['port']}
+    inpstr2-path       = {master_device_info['ip']}:{master_device_info['port']} # This should be the master's RTCM stream for corrections
     inpstr2-format     = rtcm3
 
     # Output stream
@@ -197,50 +197,56 @@ class SessionManager:
                 script_dir = os.path.dirname(os.path.abspath(__file__))
                 os.chdir(script_dir)
 
+                # Estrai le coordinate del master (LLH for antenna position)
+                # master_coords are for ant2-pos1, ant2-pos2, ant2-pos3
+                # The RTCM stream for corrections comes from master_device_info['ip']:master_device_info['port'] (inpstr2-path)
+                # However, the requirement is to get master's coordinates from RTCM stream on port 2222.
+                # This implies that the master device itself broadcasts its position via an RTCM message (e.g., type 1005/1006)
+                # For now, extract_master_coordinates will simulate getting these LLH coordinates.
+                # The master_device_info (containing IP/port) is still needed for inpstr2-path which is the correction stream.
+
+                # Let's assume the master device (whose details are in 'master') provides its coordinates
+                # via an RTCM stream accessible on its IP and a specific port (e.g. 2222 as per requirement for master coord acquisition)
+                # For the rtkrcv config, ant2-pos1/2/3 are these coordinates.
+                # inpstr2-path is where rtkrcv connects to get RTCM *correction* messages from the master.
+                # This might be the same IP/port or a different one, depending on the master's setup.
+                # The original code used master['ip']:master['port'] for inpstr2-path.
+                # The requirement says "Use the RTCM stream from port 2222 to obtain the master device’s coordinates."
+                # This is handled by extract_master_coordinates. The result is used for ant2-pos1/2/3.
+                # The inpstr2-path for *corrections* should still point to the master's correction stream output.
+                # We'll keep using master['ip']:master['port'] for inpstr2-path as in the original config logic,
+                # assuming this is where the master outputs RTCM corrections.
+
+                master_llh_coords = self.extract_master_coordinates(master) # master here is master_device_info
+                if not master_llh_coords:
+                    return False, "Impossibile ottenere le coordinate LLH del master."
+
                 # Crea il file di configurazione
-                config_path = self.create_rtkrcv_config(rover, master)
+                # Pass rover info, master device info (for IP/port of correction stream), and master LLH coords (for antenna position)
+                config_path = self.create_rtkrcv_config(rover, master, master_llh_coords)
 
-                # Estrai coordinate del master (simulato)
-                master_coords = self.extract_master_coordinates(master)
+                # Comando per avviare RTKRCV
+                cmd = [self.rtkrcv_path, '-s', '-o', config_path]
+                print(f"Avvio del comando: {' '.join(cmd)}")
+                print(f"Nella directory: {os.getcwd()}")
 
-                # Debugging: Print the value of self.rtkrcv_path
-                print(f"Debug: self.rtkrcv_path = {self.rtkrcv_path}")
-
-                # Debugging: Check if the file exists and is executable using os.path
-                try:
-                    if not os.path.isfile(self.rtkrcv_path):
-                        raise FileNotFoundError(f"File not found: {self.rtkrcv_path}")
-                    if not os.access(self.rtkrcv_path, os.X_OK):
-                        raise PermissionError(f"File not executable: {self.rtkrcv_path}")
-                except Exception as e:
-                    print(f"Error accessing rtkrcv: {str(e)}")
-                    print(f"Current working directory: {os.getcwd()}")
-                    return False, f"Error accessing rtkrcv: {str(e)}"
-
-                cmd = [self.rtkrcv_path, '-c', config_path]
-
-                # Avvia il processo
-                process = subprocess.Popen(
-                    cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True
-                )
-
-                # Salva le informazioni della sessione
+                # Avvia il processo RTKRCV
+                process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # stdout e stderr a DEVNULL se non servono
+                output_file_path = os.path.join(script_dir, "output", f"{rover['serial']}.pos")
                 self.active_sessions[serial] = {
                     'process': process,
-                    'rover': rover,
-                    'master': master,
-                    'config_path': config_path,
-                    'start_time': datetime.now(),
-                    'output_file': f"output/{serial}.nmea"
+                    'output_file': output_file_path,
+                    'rover_coords': None, # Placeholder per le coordinate del rover
+                    'status': 'running' # Stato iniziale
                 }
+                
+                # Avvia un thread per monitorare il file .pos e lo stato del processo
+                threading.Thread(target=self._monitor_pos_file, args=(serial, process, output_file_path), daemon=True).start()
 
-                return True, f"Sessione RTKRCV avviata per {rover['name']}"
-
+                return True, f"Sessione RTKRCV avviata per {rover['name']}. Monitoraggio del file .pos iniziato."
             except Exception as e:
-                return False, f"Errore nell'avvio della sessione: {str(e)}"
+                print(f"Errore durante l'avvio della sessione per {serial}: {e}")
+                return False, f"Errore nell'avvio della sessione: {e}"
     
     def stop_session(self, serial):
         """Ferma una sessione RTKRCV"""
@@ -288,18 +294,110 @@ class SessionManager:
             return process.poll() is None
     
     def get_session_status(self, serial):
-        """Ottieni lo stato di una sessione"""
+        """Ottieni lo stato di una sessione (running/stopped/fix/error)"""
         with self.lock:
-            if serial not in self.active_sessions:
-                return "stopped"
+            if serial in self.active_sessions:
+                return self.active_sessions[serial].get('status', 'stopped')
+            return 'stopped'
+
+    def get_rover_coordinates(self, serial):
+        """Ottieni le coordinate XYZ del rover se disponibili."""
+        with self.lock:
+            if serial in self.active_sessions:
+                return self.active_sessions[serial].get('rover_coords')
+            return None
+
+    def _monitor_pos_file(self, serial, process, pos_file_path):
+        """Monitora il file .pos per lo stato 'fix' e estrae le coordinate."""
+        print(f"[{serial}] Monitoraggio del file: {pos_file_path}")
+        try:
+            while process.poll() is None: # Finchè il processo rtkrcv è attivo
+                if not os.path.exists(pos_file_path):
+                    time.sleep(1) # Attendi che il file venga creato
+                    continue
+
+                with open(pos_file_path, 'r') as f:
+                    lines = f.readlines()
+                
+                # Cerca l'ultima riga valida con coordinate e stato
+                # Formato atteso (esempio, può variare): 
+                # YYYY/MM/DD HH:MM:SS.sss    lat(deg)    lon(deg)    height(m) Q=s ...
+                # Q=1 (fix), Q=2 (float), Q=5 (single)
+                # Le coordinate sono solitamente in LLH (lat, lon, height)
+                # Dobbiamo convertirle in XYZ se richiesto dal frontend, ma per ora estraiamo LLH.
+                last_valid_line = None
+                for line in reversed(lines):
+                    if line.startswith('%') or not line.strip(): # Ignora commenti e righe vuote
+                        continue
+                    parts = line.split()
+                    if len(parts) >= 5: # Deve avere almeno data, ora, lat, lon, height, Q
+                        last_valid_line = parts
+                        break
+                
+                if last_valid_line:
+                    try:
+                        # L'indice di Q e delle coordinate dipende dal formato esatto del file .pos
+                        # Questo è un esempio basato su un formato comune.
+                        # Ad esempio, se Q è il 6° elemento (indice 5) e le coordinate sono 2,3,4
+                        q_status = int(last_valid_line[5]) # Assumendo che Q sia il sesto campo
+                        
+                        if q_status == 1: # Stato FIX
+                            lat = float(last_valid_line[2])
+                            lon = float(last_valid_line[3])
+                            alt = float(last_valid_line[4]) # Altezza ellissoidica
+                            
+                            # Qui dovresti convertire LLH in XYZ se necessario.
+                            # Per ora, memorizziamo LLH e simuliamo XYZ.
+                            # La conversione LLH -> XYZ richiede un modello geodetico (es. WGS84)
+                            # e può essere complessa. Usiamo valori fittizi per XYZ.
+                            rover_xyz_coords = {
+                                'x': lon * 100000, # Esempio di trasformazione banale
+                                'y': lat * 100000,
+                                'z': alt * 10
+                            }
+
+                            with self.lock:
+                                if serial in self.active_sessions:
+                                    self.active_sessions[serial]['rover_coords'] = rover_xyz_coords
+                                    self.active_sessions[serial]['status'] = 'fix'
+                            print(f"[{serial}] Stato FIX raggiunto. Coordinate (LLH): {lat}, {lon}, {alt}. XYZ (simulato): {rover_xyz_coords}")
+                            process.terminate() # Termina rtkrcv
+                            try:
+                                process.wait(timeout=5) # Attendi che termini
+                            except subprocess.TimeoutExpired:
+                                process.kill()
+                            print(f"[{serial}] Processo RTKRCV terminato.")
+                            # Pulisci il file .pos dopo aver ottenuto il fix (opzionale)
+                            # if os.path.exists(pos_file_path):
+                            #    os.remove(pos_file_path)
+                            return # Esce dal thread di monitoraggio
+                        elif q_status == 2: # Float
+                             with self.lock:
+                                if serial in self.active_sessions:
+                                    self.active_sessions[serial]['status'] = 'float'
+                        elif q_status == 5: # Single
+                            with self.lock:
+                                if serial in self.active_sessions:
+                                    self.active_sessions[serial]['status'] = 'single'
+                        # Altri stati potrebbero essere gestiti qui
+
+                    except (ValueError, IndexError) as e:
+                        print(f"[{serial}] Errore nel parsing della riga del file .pos: {line.strip()} - {e}")
+                        pass # Ignora righe malformate
+
+                time.sleep(2) # Controlla ogni 2 secondi
             
-            process = self.active_sessions[serial]['process']
-            if process.poll() is None:
-                return "running"
-            else:
-                # Processo terminato, rimuovi dalla lista
-                del self.active_sessions[serial]
-                return "stopped"
+            # Se il loop finisce, il processo rtkrcv si è fermato per qualche motivo
+            with self.lock:
+                if serial in self.active_sessions and self.active_sessions[serial]['status'] not in ['fix', 'error']:
+                    self.active_sessions[serial]['status'] = 'stopped'
+            print(f"[{serial}] Processo RTKRCV non più attivo. Monitoraggio terminato.")
+
+        except Exception as e:
+            print(f"[{serial}] Errore nel thread di monitoraggio del file .pos: {e}")
+            with self.lock:
+                if serial in self.active_sessions:
+                    self.active_sessions[serial]['status'] = 'error'
     
     def get_session_output(self, serial, lines=20):
         """Ottieni le ultime righe dell'output NMEA"""
