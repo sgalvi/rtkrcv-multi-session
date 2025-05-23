@@ -43,11 +43,26 @@ rtkrcv-manager/
 ### 1. Prerequisiti
 - Python 3.7 o superiore
 - pip (gestore pacchetti Python)
+- Rtkrcv
 
 ### 2. Installazione Dipendenze
 
-
-(opzionale) Crea un virtual enviroment:
+#### 2.1 RTKRCV
+Clona i repository di rtkrcv
+Puoi trovare l'ultima versione di rtkrcv a questo indirizzo:
+https://github.com/rtklibexplorer/RTKLIB.git
+Una volta clonato sulla propria macchina, spostarsi nella directory /app/consapp/rtkrcv/gcc/ e compiliamo il nostro programma
+```bash
+git clone https://github.com/rtklibexplorer/RTKLIB.git
+cd /app/consapp/rtkrcv/gcc
+make
+```
+a questo punto ci troveremo il binario compilato di rtkrcv. consiglio di spostarlo nella root del progetto oppure in /usr/local/bin/ assicurandoci di renderlo eseguibile
+```bash 
+chmod +x rtkrcv
+```
+#### 2.2 Dipendenze python 
+Crea un virtual enviroment:
 > ```bash
 >python3 -m venv venv
 >```
