@@ -49,11 +49,11 @@ rtkrcv-manager/
 
 (opzionale) Crea un virtual enviroment:
 > ```bash
->python3 -m venv pisdrul
+>python3 -m venv venv
 >```
 >Attiva virtual enviroment:
 >```bash
->source pisdrul/bin/activate
+>source venv/bin/activate
 >```
 
 Installa le dipendenze:
