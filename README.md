@@ -41,9 +41,9 @@ rtkrcv-manager/
 ## 🚀 Installazione e Avvio
 
 ### 1. Prerequisiti
-- Python 3.7 o superiore
+- Python (3.7 o superiore)
 - pip (gestore pacchetti Python)
-- Rtkrcv
+- make
 
 ### 2. Installazione Dipendenze
 
