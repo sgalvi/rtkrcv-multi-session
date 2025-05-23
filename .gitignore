@@ -1,4 +1,5 @@
 pisdrul/
+venv/
 __pycache__/*
 rtklib
 *.pyc
